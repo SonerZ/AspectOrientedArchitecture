@@ -1,0 +1,140 @@
+
+@{
+    ViewData["Title"] = "Fonksiyon Yönetimi";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card col-md-8 m-2 p-2">
+        <div class="card-header">
+            <h5>Fonksiyonlar</h5>
+        </div>
+        <div class="mt-1" id="grid"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(() => {
+        const URL = 'http://localhost:1400';  
+
+        const functionStore = new DevExpress.data.CustomStore({
+            key: 'id',  
+            load() {
+             
+                return sendRequest(`${URL}/function`).then(data => {
+                 
+                    if (!data || !Array.isArray(data)) {
+                        console.log(data)
+                        console.error("Geçersiz veri alındı.");
+                        return [];
+                    }
+
+                 
+                    return data; 
+                });
+            },
+            insert(values) {
+                return sendRequest(`${URL}/function`, 'POST', values);
+            },
+            update(key, values) {
+                return sendRequest(`${URL}/function`, 'PUT', {
+                    id: key,
+                    name: values.name
+                });
+            },
+            remove(key) {
+                return sendRequest(`${URL}/function?key=`+key, 'DELETE');
+            }
+        });
+
+    
+        const dataGrid = $('#grid').dxDataGrid({
+            dataSource: functionStore,  
+            repaintChangesOnly: true,  
+            showBfunction: true,  
+            editing: {
+                refreshMode: 'reshape',  
+                mode: 'cell',
+                allowAdding: true,
+                allowUpdating: true,
+                allowDeleting: true
+            },
+            scrolling: {
+                mode: 'virtual', 
+            },
+            columns: [
+                {
+                    dataField: 'id',  
+                    caption: 'id',
+                    dataType: 'text',
+                },
+                {
+                    dataField: 'name',  
+                    caption: 'name',
+                    dataType: 'text',
+                }
+            ],
+            summary: {
+                totalItems: [
+                    {
+                        column: 'id',
+                        summaryType: 'count',
+                    }
+                ]
+            }
+        }).dxDataGrid('instance');
+
+        $('#refresh-mode').dxSelectBox({
+            items: ['full', 'reshape', 'repaint'],
+            value: 'reshape',
+            inputAttr: { 'aria-label': 'Refresh Mode' },
+            onValueChanged(e) {
+                dataGrid.option('editing.refreshMode', e.value);
+            }
+        });
+
+        $('#clear').dxButton({
+            text: 'Clear',
+            onClick() {
+                $('#requests ul').empty();
+            },
+        });
+
+        function sendRequest(url, method = 'GET', data = {}) {
+            const d = $.Deferred();
+
+            logRequest(method, url, data);
+
+            $.ajax({
+                url: url,
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true },
+                success: function (result) {
+                    
+                    d.resolve(method === 'GET' ? result : result);
+                },
+                error: function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                }
+            });
+
+            return d.promise();
+        }
+
+        function logRequest(method, url, data) {
+            const args = Object.keys(data || {}).map((key) => `${key}=${data[key]}`).join(' ');
+
+            const logList = $('#requests ul');
+            const time = DevExpress.localization.formatDate(new Date(), 'HH:mm:ss');
+            const newItem = $('<li>').text([time, method, url.slice(URL.length), args].join(' '));
+
+            logList.prepend(newItem);
+        }
+    });
+
+</script>
+
+

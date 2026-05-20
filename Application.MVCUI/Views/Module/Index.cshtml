@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Taslaklar";
+}
+@using Application.Entities.CustomEntities.User
+@using Application.MVCUI.Services.Session
+@inject ISessionService SessionService
+
+@{
+    var user = SessionService?.Get<UserDto>("user-session");
+}
+
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row ">
+        <div class="col-md-10 m-4">
+            <div class="page-title-box ">
+                <div class="card-header">
+                    <h5>Taslaklar  <button onclick="window.location= '/Module/Create'" class="btn btn-dark" style="  scale: 0.7; font-size: 17px; width: 50px;">
+                            <i class="dripicons-plus"></i>
+                        </button></h5>
+                </div>
+               
+                <div class=" card card-body">
+
+
+
+                    <div id="activityGridContainer" style="margin-top: 2px;">
+                        <!-- Buraya tablo içeriği gelecek -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <!-- DevExpress GridView -->
+    
+
+</div>
+<!-- container -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        // AJAX call to get data from the controller
+        $(document).ready(function() {
+            const URL = 'http://localhost:1400';
+            
+            $.ajax({
+                url: URL +'/activity', // Controller Action
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Authorization': 'Bearer @user.TokenInformation.Token'
+                },
+                success: function(data) {
+                    console.log(data);  // Veriyi konsola yazdırıyoruz.
+                    if (data.isSuccess) {
+                        // Verinin yapısını kontrol et
+                        console.log(data.data); // Veriyi ayrıca kontrol et
+                        $("#activityGridContainer").dxDataGrid({
+                            dataSource: data.data,
+                            columns: [
+                                { dataField: "activityType", caption: "Kategori" },
+                                { dataField: "count", caption: "Sayı" },
+                                { dataField: "checkValue", caption: "Durum", dataType: "boolean" },
+                                {
+                                    type: "buttons",
+                                    buttons: [
+                                        {
+                                            hint: "Edit",
+                                            icon: "edit",
+                                            onClick: function(e) {
+                                                var selectedRow = e.row.data;
+                                                window.location.href = '/Module/Edit?id=' + selectedRow.id;
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        });
+                    }
+                },
+
+                error: function(xhr, status, error) {
+                    alert("Error loading data.");
+                }
+            });
+        });
+    </script>
+

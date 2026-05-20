@@ -1,0 +1,318 @@
+@using Application.Core.Entities.Concrete
+@using Application.Entities.CustomEntities.User
+@model IEnumerable<Application.Entities.CustomEntities.User.UserDto>
+
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+    List<RoleDto> roles = (List<RoleDto>)TempData["Roles"];
+    List<ClaimDto> claims = (List<ClaimDto>)TempData["Claims"];
+}
+
+<div class="container-fluid mt-4">
+    <div class="card col-md-8">
+        <div class="card-header mt-2 d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Kullanıcı İşlemleri  <button style="scale: 0.7;font-size: 17px" data-toggle="modal" data-target="#login-modal" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class=" dripicons-plus"></i>
+            </button></h5>
+           
+        </div>
+
+     
+        
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Kullanıcı Adı</th>
+                            <th>Ad</th>
+                            <th>Soyad</th>
+                            <th>Roller</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Username</td>
+                                <td>@user.Username</td>
+                                <td>@user.Username</td>
+                                <td>@foreach (var role in user.Roles)
+                                    {
+                                        <strong>@role.Role.Name, </strong>
+                                    }</td>
+                                <td>
+                                  
+                                    <i onclick="deleteUser('@user.Id')" style="font-size: 16px;cursor:pointer;" class="text-danger mr-2 dripicons-trash"></i>
+                                    <button data-toggle="modal" data-target="#dark-header-modal" class="btn btn-sm btn-dark" onclick="setUserRole('@user.Id')">
+                                        <i class=" dripicons-backspace"></i> Rol Ata
+                                    </button>
+
+                                    <button data-toggle="modal" data-target="#dark-header-modal-second" class="btn btn-sm btn-secondary" onclick="setUserRole('@user.Id')">
+                                        <i class=" dripicons-backspace"></i> Claim Ata
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="standard-modalLabel">Kullanıcı Oluştur</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center  ">
+                    <a href="index.html" class="text-success">
+                        <span><img src="assets/images/logo-dark.png" alt="" height="18"></span>
+                    </a>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input class="form-control" type="text" id="username" required="" placeholder="Kullanıcı adı">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Parola</label>
+                    <input class="form-control" type="password" required="" id="password" placeholder="Parola">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Parola Tekrar</label>
+                    <input class="form-control" type="password" required="" id="confirmPassword" placeholder="Parola Tekrar">
+                </div>
+
+                <div class="form-group text-center">
+                    <button class="btn btn-rounded btn-dark" onclick="saveUser()" type="button"><i class=" dripicons-plus"></i> Oluştur</button>
+                </div>
+
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div id="dark-header-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dark-header-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-secondary">
+                <h4 class="modal-title" id="dark-header-modalLabel">Rol Ata</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <select id="role" class="form-control select2" data-toggle="select2">
+                    <option>Seçim Yapın</option>
+                    <optgroup label="Roller">
+                        @foreach (var role in roles)
+                        {
+                            <option value="@role.Id">@role.Name</option>
+                        }
+                    </optgroup>
+                
+                </select>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Kapat</button>
+                <button type="button" onclick="setRole()" class="btn btn-dark">Kaydet</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="dark-header-modal-second" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dark-header-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-secondary">
+                <h4 class="modal-title" id="dark-header-modalLabel">Claim Ata</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <select id="user-claim" class="form-control select2" data-toggle="select2">
+                    <option>Seçim Yapın</option>
+                    <optgroup label="Roller">
+                        @foreach (var claim in claims)
+                        {
+                            <option value="@claim.Id">@claim.Type / @claim.Value</option>
+                        }
+                    </optgroup>
+
+                </select>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Kapat</button>
+                <button type="button" onclick="setClaim()" class="btn btn-dark">Kaydet</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+<script>
+
+    
+    var userId = ""
+    
+    function setUserRole(id)
+    {
+        userId = id;
+    }
+
+    function setClaim()
+    {
+        var selectedValue = document.getElementById('user-claim').value;
+
+        fetch(`/Account/AddClaimToUser/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ClaimId: selectedValue
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isSuccess) {
+                    window.location = ""
+                } else {
+                    alert(data.messages[0].value);
+                }
+            })
+    }
+    
+    function setRole()
+    {
+        var selectedValue = document.getElementById('role').value;
+
+        fetch(`/Account/AddRoleToUser/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                UserId: userId,
+                RoleId: selectedValue
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isSuccess) {
+                    window.location = ""
+                } else {
+                    alert(data.messages[0].value);
+                }
+            })
+    }
+    
+        function editUser(id, username) {
+            fetch(`/Account/GetUser/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isSuccess) {
+                        const user = data.data;
+                        document.getElementById('editUserId').value = user.id;
+                        document.getElementById('editUsername').value = user.username;
+                        document.getElementById('editEmail').value = user.email;
+                        document.getElementById('editFirstName').value = user.firstName;
+                        document.getElementById('editLastName').value = user.lastName;
+                        
+                        // Modal'ı aç
+                        new bootstrap.Modal(document.getElementById('editUserModal')).show();
+                    } else {
+                        alert('Kullanıcı bilgileri alınamadı!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Bir hata oluştu!');
+                });
+        }
+
+        function deleteUser(id) {
+            if (confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
+                fetch(`/Account/DeleteUser/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isSuccess) {
+                        location.reload();
+                    } else {
+                        alert(data.messages[0].value);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Bir hata oluştu!');
+                });
+            }
+        }
+
+        function saveUser() {
+            
+            var user = document.getElementById("username").value
+            var password = document.getElementById("password").value
+            var confirmpassword = document.getElementById("confirmPassword").value
+
+            if (password != confirmpassword)
+            {
+                alert("Parolalar aynı değil!")
+            }
+
+            fetch('/Register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'  
+                },
+                body: JSON.stringify({
+                    Username: user,
+                    Password: password,
+                    ConfirmPassword: confirmpassword
+                })
+            })
+             .then(response =>  location.reload())
+            .catch(error => {
+                alert('Bir hata oluştu!');
+            });
+        }
+
+        function updateUser() {
+            const form = document.getElementById('editUserForm');
+            const formData = new FormData(form);
+            
+            fetch('/Account/UpdateUser', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isSuccess) {
+                    alert('Kullanıcı başarıyla güncellendi!');
+                    location.reload();
+                } else {
+                    alert(data.messages[0].value);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu!');
+            });
+        }
+    
+</script>
+

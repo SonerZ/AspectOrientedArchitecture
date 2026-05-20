@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="ClosedXML" Version="0.95.3" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
+    <ProjectReference Include="..\Application.DataAccess\Application.DataAccess.csproj" />
+    <ProjectReference Include="..\Application.Entities\Application.Entities.csproj" />
+    <ProjectReference Include="..\Application.Packages.AOP\Application.Packages.AOP.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.Core\Application.Packages.Hashing.Core.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.MD5\Application.Packages.Hashing.MD5.csproj" />
+    <ProjectReference Include="..\Application.Packages.JWT\Application.Packages.JWT.csproj" />
+    <ProjectReference Include="..\Application.Packages.RabbitMQ\Application.Packages.RabbitMQ.csproj" />
+  </ItemGroup>
+
+</Project>

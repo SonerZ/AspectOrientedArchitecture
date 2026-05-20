@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+  </ItemGroup>
+
+	
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Business\Application.Business.csproj" />
+    <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
+    <ProjectReference Include="..\Application.Entities\Application.Entities.csproj" />
+    <ProjectReference Include="..\Application.Packages.AOP\Application.Packages.AOP.csproj" />
+    <ProjectReference Include="..\Application.Packages.Caching.Core\Application.Packages.Caching.Core.csproj" />
+    <ProjectReference Include="..\Application.Packages.Caching.InMemory\Application.Packages.Caching.InMemory.csproj" />
+    <ProjectReference Include="..\Application.Packages.Caching.Redis\Application.Packages.Caching.Redis.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.Core\Application.Packages.Hashing.Core.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.MD5\Application.Packages.Hashing.MD5.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.SHA256\Application.Packages.Hashing.SHA256.csproj" />
+    <ProjectReference Include="..\Application.Packages.HttpClient\Application.Packages.HttpClient.csproj" />
+    <ProjectReference Include="..\Application.Packages.JWT\Application.Packages.JWT.csproj" />
+    <ProjectReference Include="..\Application.Packages.RabbitMQ\Application.Packages.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Application.Business\Application.Business.csproj" />
+    <ProjectReference Include="..\Application.Packages.AOP\Application.Packages.AOP.csproj" />
+    <ProjectReference Include="..\Application.Packages.Hashing.MD5\Application.Packages.Hashing.MD5.csproj" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,137 @@
+
+
+
+
+
+USE reverse_handshake;
+
+-- 2. Functions tablosunu oluştur
+CREATE TABLE functions (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255)
+);
+
+-- 3. Departments tablosunu oluştur
+CREATE TABLE departments (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    FunctionId CHAR(36) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255),
+    FOREIGN KEY (FunctionId) REFERENCES functions(Id) ON DELETE CASCADE
+);
+
+-- 4. Users tablosunu oluştur
+CREATE TABLE users (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL UNIQUE,
+    PasswordHash VARCHAR(255) NOT NULL,
+    LastLoginDate DATETIME NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255)
+);
+
+-- 5. Roles tablosunu oluştur
+CREATE TABLE roles (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255)
+);
+
+
+CREATE TABLE claims (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    Type VARCHAR(255) NOT NULL,
+    Value VARCHAR(255) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255)
+);
+
+
+CREATE TABLE roleclaims (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    ClaimId CHAR(36) NOT NULL,
+    RoleId CHAR(36) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255),
+    FOREIGN KEY (RoleId) REFERENCES roles(Id) ON DELETE CASCADE,
+    FOREIGN KEY (ClaimId) REFERENCES claims(Id) ON DELETE CASCADE
+);
+
+CREATE TABLE userclaims (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    UserId CHAR(36) NOT NULL,
+    ClaimId CHAR(36) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255),
+    FOREIGN KEY (UserId) REFERENCES users(Id) ON DELETE CASCADE,
+    FOREIGN KEY (ClaimId) REFERENCES claims(Id) ON DELETE CASCADE
+);
+
+-- 6. UserRoles tablosunu oluştur (Users ve Roles arasında many-to-many ilişki)
+CREATE TABLE userroles (
+    Id CHAR(36) NOT NULL PRIMARY KEY,
+    UserId CHAR(36) NOT NULL,
+    RoleId CHAR(36) NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME NULL,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME NULL,
+    DeletedUsername VARCHAR(255)
+
+);
+
+
+CREATE TABLE activities (
+    Id CHAR(36) NOT NULL, -- Store GUID as CHAR(36) instead of BINARY(16)
+    UserId CHAR(36) NOT NULL, -- GUID for UserId as CHAR(36)
+    ActivityType VARCHAR(255) NOT NULL,
+    ActivityDate DATETIME NOT NULL,
+    Description TEXT,
+    Count INT NOT NULL,
+    CheckValue BOOLEAN NOT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CreatedUsername VARCHAR(255),
+    ModifiedDate DATETIME,
+    ModifiedUsername VARCHAR(255),
+    DeletedDate DATETIME,
+    DeletedUsername VARCHAR(255),
+    PRIMARY KEY (Id)
+);
+
+
+
+

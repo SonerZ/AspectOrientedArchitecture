@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "TLS Oturum Ekranı";
+    Layout = null;
+
+    var objectMessage = TempData["ErrorMessage"];
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="https://www.tlslojistik.com/uploads/logolar/1276308494-GENEL-01.png">
+
+    <!-- App css -->
+    <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style" />
+    <link href="../assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style" />
+
+</head>
+
+<body class="authentication-bg pb-0" data-layout-config='{"darkMode":false}'>
+
+<div class="auth-fluid">
+    <!--Auth fluid left content -->
+    <div class="auth-fluid-form-box">
+        <div class="align-items-center d-flex h-100">
+            <div class="card-body">
+
+                <!-- Logo -->
+                <div class="auth-brand text-center text-lg-left">
+                    <a href="index.html" class="logo-dark">
+                        <span><img src="https://www.tlslojistik.com/uploads/logolar/1276308494-GENEL-01.png" alt="" height="38"></span>
+                    </a>
+                    <a href="index.html" class="logo-light">
+                        <span><img src="https://www.tlslojistik.com/uploads/logolar/1276308494-GENEL-01.png" alt="" height="38"></span>
+                    </a>
+                </div>
+
+                <!-- title-->
+                <h4 class="mt-0">Kayıt Ekranı</h4>
+                <p class="text-muted mb-4">Uygulamayı kullanabilmek için kayıt oluşturun.</p>
+
+        
+                <!-- form -->
+                <form action="/Account/RegisterForm" method="post">
+                    <div class="form-group">
+                        <label for="emailaddress">Kullanıcı Adınız</label>
+                        <input class="form-control" type="text" name="Username" id="emailaddress" required="" placeholder="Kullanıcı adınızı girin">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Parolanız</label>
+                        <input class="form-control" type="password" name="Password" required="" id="password" placeholder="Parolanızı girin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Parolanız Tekrar</label>
+                        <input class="form-control" type="password" name="ConfirmPassword" required="" id="password" placeholder="Parolanızı tekrar girin">
+                    </div>
+                 
+                    <div class="form-group mb-0 text-center">
+                        <button class="btn btn-primary btn-block" type="submit"><i class="mdi mdi-login"></i> Kayıt Ol </button>
+                    </div>
+
+                  @if (objectMessage != null)
+                    {
+                        <div class="mt-4 alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>@objectMessage.ToString()</strong> 
+                        </div>
+                    }
+                    <!-- social-->
+                    <div class="text-center mt-4">
+                        <p class="text-muted font-16">Şunlar ile kayıt ol</p>
+                        <ul class="social-list list-inline mt-3">
+                            <li class="list-inline-item">
+                                <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i class="mdi mdi-facebook"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i class="mdi mdi-google"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="javascript: void(0);" class="social-list-item border-info text-info"><i class="mdi mdi-twitter"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i class="mdi mdi-github-circle"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+                <!-- end form-->
+
+                <!-- Footer-->
+                <footer class="footer footer-alt">
+                    <p class="text-muted">Henüz mevcut mu? <a href="/Account" class="text-muted ml-1"><b>Oturum Aç</b></a></p>
+                </footer>
+
+            </div> <!-- end .card-body -->
+        </div> <!-- end .align-items-center.d-flex.h-100-->
+    </div>
+    <!-- end auth-fluid-form-box-->
+
+    <!-- Auth fluid right content -->
+    <div class="auth-fluid-right text-center">
+        <div class="auth-user-testimonial">
+            <h2 class="mb-3">TLS Lojistik A.Ş!</h2>
+            <p class="lead"><i class="mdi mdi-format-quote-open"></i> It's a elegent templete. I love it very much! . <i class="mdi mdi-format-quote-close"></i>
+            </p>
+            <p>
+                - Hyper Admin User
+            </p>
+        </div> <!-- end auth-user-testimonial-->
+    </div>
+    <!-- end Auth fluid right content -->
+</div>
+<!-- end auth-fluid-->
+
+<!-- bundle -->
+<script src="../assets/js/vendor.min.js"></script>
+<script src="../assets/js/app.min.js"></script>
+
+</body>
+
+</html>

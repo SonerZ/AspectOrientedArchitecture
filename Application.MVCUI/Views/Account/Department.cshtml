@@ -1,0 +1,194 @@
+
+@{
+    ViewData["Title"] = "Fonksiyon Yönetimi";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card col-md-8 m-2 p-2">
+        <div class="card-header">
+            <h5>Birimler</h5>
+        </div>
+
+        <div class="mt-1" id="dropdown"></div>
+
+        <div  id="grid"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+    
+    $(() => {
+        const URL = 'http://localhost:1400';
+
+        var dataSource = [{ value: "c8429edc-7df1-4642-87fb-33433bcdf78b", name: "Seçiniz" }];
+        
+        fetch(URL+'/function') 
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item=> {
+                    dataSource.push({ value: item.id, name: item.name })
+                })
+                
+                $("#dropdown").dxSelectBox({
+                    dataSource: dataSource, // API'den alınan veri
+                    value: dataSource[0].value, // Varsayılan olarak ilk öğeyi seçiyoruz
+                    displayExpr: "name", // Dropdown'da gösterilecek alan
+                    valueExpr: "value", // Seçilen değerin değeri
+                    placeholder: "Bir seçenek seçin",
+                    onValueChanged: function(e) {
+                        // Seçilen değeri alıyoruz
+                        var selectedValue = e.value;
+                        var selectedItem = data.find(item => item.value === selectedValue);
+                      
+                        window.location = "?function=" + selectedValue
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Veri alınırken hata oluştu:", error);
+            });
+
+        const functionStore = new DevExpress.data.CustomStore({
+            key: 'id',  
+            load() {
+                
+                var uri = `${URL}/department`
+                var parameter = getParameterByName("function")
+                if(parameter != null)
+                {
+                    uri += "?function=" + parameter
+                }
+                
+                return sendRequest(uri).then(data => {
+                    if (!data || !Array.isArray(data)) {
+                        console.log(data)
+                        console.error("Geçersiz veri alındı.");
+                        return [];
+                    }
+                 
+                    return data; 
+                });
+            },
+            insert(values) {
+                var parameter = getParameterByName("function")
+                if(parameter == null)
+                {
+                   return null;
+                }
+            
+                return sendRequest(`${URL}/department`, 'POST', {functionId: parameter, name : values.name});
+            },
+            update(key, values) {
+                return sendRequest(`${URL}/department`, 'PUT', {
+                    id: key,
+                    name: values.name
+                });
+            },
+            remove(key) {
+                return sendRequest(`${URL}/department?key=`+key, 'DELETE');
+            }
+        });
+
+    
+        const dataGrid = $('#grid').dxDataGrid({
+            dataSource: functionStore,  
+            repaintChangesOnly: true,  
+            showBfunction: true,  
+            editing: {
+                refreshMode: 'reshape',  
+                mode: 'cell',
+                allowAdding: true,
+                allowUpdating: true,
+                allowDeleting: true
+            },
+            scrolling: {
+                mode: 'virtual', 
+            },
+            columns: [
+                {
+                    dataField: 'id',  
+                    caption: 'id',
+                    dataType: 'text',
+                },
+                {
+                    dataField: 'name',  
+                    caption: 'name',
+                    dataType: 'text',
+                }
+            ],
+            summary: {
+                totalItems: [
+                    {
+                        column: 'id',
+                        summaryType: 'count',
+                    }
+                ]
+            }
+        }).dxDataGrid('instance');
+
+        $('#refresh-mode').dxSelectBox({
+            items: ['full', 'reshape', 'repaint'],
+            value: 'reshape',
+            inputAttr: { 'aria-label': 'Refresh Mode' },
+            onValueChanged(e) {
+                dataGrid.option('editing.refreshMode', e.value);
+            }
+        });
+
+        $('#clear').dxButton({
+            text: 'Clear',
+            onClick() {
+                $('#requests ul').empty();
+            },
+        });
+
+        function sendRequest(url, method = 'GET', data = {}) {
+            const d = $.Deferred();
+
+            logRequest(method, url, data);
+
+            $.ajax({
+                url: url,
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true },
+                success: function (result) {
+                    
+                    d.resolve(method === 'GET' ? result.data : result);
+                },
+                error: function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                }
+            });
+
+            return d.promise();
+        }
+
+        function logRequest(method, url, data) {
+            const args = Object.keys(data || {}).map((key) => `${key}=${data[key]}`).join(' ');
+
+            const logList = $('#requests ul');
+            const time = DevExpress.localization.formatDate(new Date(), 'HH:mm:ss');
+            const newItem = $('<li>').text([time, method, url.slice(URL.length), args].join(' '));
+
+            logList.prepend(newItem);
+        }
+    });
+
+
+
+</script>
+
+

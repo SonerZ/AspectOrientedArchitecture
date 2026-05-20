@@ -1,0 +1,383 @@
+﻿@{
+    ViewData["Title"] = "Yeni Aktivite Ekle";
+}
+@using Application.Entities.CustomEntities.User
+@using Application.MVCUI.Services.Session
+@inject ISessionService SessionService
+
+@{
+    var user = SessionService?.Get<UserDto>("user-session");
+}
+
+<!-- DevExpress CSS ve JS Dosyalarının Eklendiği Yerler -->
+<link href="https://cdn.devexpress.com/DevExtreme/22.1.6/css/dx.light.css" rel="stylesheet" />
+<script src="https://cdn.devexpress.com/DevExtreme/22.1.6/js/dx.all.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+    #icon-back,
+    #icon-disabled-back {
+        margin-left: 4px;
+    }
+
+    .dx-viewport .dx-fieldset {
+        width: 520px;
+        margin: 30px auto;
+    }
+
+    .dx-viewport .dx-fieldset:first-child {
+        margin-top: 120px;
+    }
+
+    .dx-viewport .dx-fieldset-header {
+        font-size: 16px;
+    }
+
+    .dx-viewport .dx-field {
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    .dx-viewport .dx-field-value:not(.dx-widget) > .dx-button {
+        float: none;
+    }
+
+    .dx-viewport .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button),
+    .dx-viewport .dx-field-label {
+        float: none;
+        width: 100%;
+    }
+
+    .dx-viewport .dx-field-label {
+        padding-left: 0;
+    }
+
+    .send .dx-button-content .dx-icon {
+        font-size: 18px;
+    }
+
+    .fields-container {
+        display: flex;
+        align-items: baseline;
+    }
+
+    .dx-field-value {
+        display: flex;
+    }
+
+</style>
+
+<div class="container-fluid">
+    <div class="row mt-2">
+        <div class="col-md-4  mt-2">
+            <!-- Bootstrap Card başlatılıyor -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Taslak Düzenleniyor</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Form başlangıcı -->
+                    <form>
+                     
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Açıklama</label>
+                            <input type="text" id="exampleTextBoxDescription" placeholder="Lütfen bir açıklama girin." class="dx-textbox" />
+                        </div>  
+                        
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Tarih</label>
+                            <div id="datePickerContainer"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="exampleSelect">Seçim Yapın</label>
+                                <div id="selectBoxContainer">
+                                    <!-- DevExpress SelectBox -->
+                                    <div id="exampleSelect"></div> <!-- Burada <select> yerine <div> kullanıyoruz -->
+                                </div>
+                            </div>                            <small id="emailHelp" class="form-text text-muted">Uygun bir kategori seçiniz.</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="exampleToggle">Aktif/Pasif</label>
+                            <div id="toggleSwitchContainer">
+                                <!-- DevExpress ToggleSwitch -->
+                                <div id="exampleToggle"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="exampleNumberBox">Adet Seçin</label>
+                            <div id="numberBoxContainer">
+                                <!-- DevExpress NumberBox -->
+                                <div id="exampleNumberBox"></div>
+                            </div>
+                        </div>
+                     
+                       
+                        <div onclick="removeItem()" class=" dripicons-trash text-danger" style="float: right;scale: 1.1;cursor: grab"></div>
+                        <div id="icon-done"><i class=" dripicons-checkmark"></i> Kaydet</div>
+                    </form>
+                    <!-- Form sonu -->
+                </div>
+            </div>
+            <!-- Bootstrap Card sonu -->
+        </div>
+    </div>
+</div>
+
+<script>
+    
+    function removeItem()
+    {
+        var confirmf = confirm("Veriyi silmek istediğinizden emin misiniz?")
+        
+        if (confirmf)
+        {
+            $.ajax({
+                url: `${URL}/activity?id=` + getParameterByName("id"),
+                type: "DELETE",
+                contentType: "application/json",
+                headers: {
+                    'Authorization': 'Bearer @user.TokenInformation.Token'
+                },
+                success: function(response) {
+                   window.location = "/Module"
+                },
+                error: function(xhr, status, error) {
+
+                }
+            });
+        }
+    }
+    
+    const URL = 'http://localhost:1400';
+    
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+    $.ajax({
+        url: `${URL}/get-activity?id=` + getParameterByName("id"),  
+        type: "GET",
+        contentType: "application/json",
+        headers: {
+            'Authorization': 'Bearer @user.TokenInformation.Token'
+        },
+        success: function(response) {
+            $("#exampleTextBoxDescription").val(response.data.description)
+
+            $("#exampleToggle").val(true)
+
+
+            console.log(response)
+        },
+        error: function(xhr, status, error) {
+           
+        }
+    });
+    
+    $("#icon-done").click(function() {
+        var description = $("#exampleTextBoxDescription").val()
+        var date = $("#datePickerContainer").dxDateBox("instance").option("value");
+        var select = $("#exampleSelect").dxSelectBox("instance").option("value");
+        var checkValue = $("#exampleToggle").dxSwitch("instance").option("value");
+        var count = $("#exampleNumberBox").dxNumberBox("instance").option("value");
+
+        var formData = {
+            Description: description,
+            ActivityDate: date,
+            ActivityType: select,
+            CheckValue: checkValue,
+            Count: count,
+            Id: getParameterByName("id")
+        };
+        
+        console.log(formData)
+        
+        $.ajax({
+            url: `${URL}/activity`,  // API endpoint adresi
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            headers: {
+                'Authorization': 'Bearer @user.TokenInformation.Token'
+            },
+            success: function(response) {
+               window.location = "/Module"
+            },
+            error: function(xhr, status, error) {
+                alert("Bir hata oluştu!");
+                console.error(error);
+            }
+        });
+    });
+    
+    
+    $(function() {
+        $("#exampleNumberBox").dxNumberBox({
+            value: 1, // Başlangıç değeri
+            min: 1,   // Minimum değer
+            max: 10,  // Maximum değer
+            step: 1,  // Adım (arttırma/azaltma miktarı)
+            width: 200,  // Genişlik
+            height: 40,  // Yükseklik
+            showSpinButtons: true, // Sayacın yanında arttırma ve azaltma butonları
+            stylingMode: 'outlined' // Çerçeve stili
+        });
+    });
+    
+    $(function() {
+        $("#exampleToggle").dxSwitch({
+            value: false,  // Başlangıçta kapalı (pasif)
+            onText: "Aktif",  // Açık durumda yazılacak metin
+            offText: "Pasif",  // Kapalı durumda yazılacak metin
+            width: 100,  // Genişlik
+            height: 30,  // Yükseklik
+            stylingMode: "outlined"  // Çerçeve stili
+        });
+    });
+
+    $(function() {
+        $("#exampleSelect").dxSelectBox({
+            items: ["Seçenek 1", "Seçenek 2", "Seçenek 3"],  // Seçenekler
+            value: "Seçenek 1",  // Varsayılan değer
+            width: 400,          // Genişlik
+            height: 30,          // Yükseklik
+            stylingMode: 'outlined'  // Çerçeve stili
+        });
+    });
+    
+    $(function() {
+        $('#exampleTextBoxDescription').dxTextBox({
+            placeholder: 'Açıklama bir açıklama girin.',
+            width: 400,  // Genişlik arttırıldı
+            height: 30,  // Yükseklik arttırıldı
+            stylingMode: 'outlined'  // Çerçeve stili
+        });
+    });
+    $(function () {
+        $("#datePickerContainer").dxDateBox({
+            type: "date",  // DatePicker türü
+            value: new Date(), // Varsayılan tarih
+            width: 400,  // Genişlik arttırıldı
+            height: 30,  // Yükseklik arttırıldı
+            displayFormat: "yyyy-MM-dd", // Tarih formatı
+            showClearButton: true // Temizleme butonunu göster
+        });
+    });
+    
+    $(() => {
+        // ActivityType
+        $('#activity-type').dxTextBox({
+            value: '',
+            placeholder: 'Aktivite Kategorisini girin'
+        });
+
+        // ActivityDate
+        $('#activity-date').dxDateBox({
+            value: null,
+            placeholder: 'Tarihi seçin',
+            displayFormat: 'yyyy-MM-dd'
+        });
+
+        // Description
+        $('#description').dxTextArea({
+            value: '',
+            placeholder: 'Açıklama girin'
+        });
+
+        // Count
+        $('#count').dxNumberBox({
+            value: 0,
+            min: 0,
+            showSpinButtons: true,
+            placeholder: 'Sayı girin'
+        });
+
+        // Check
+        $('#check').dxSwitch({
+            value: false
+        });
+
+        // Button configurations for the icons (not changed)
+        $('#icon-done').dxButton({
+            icon: 'check',
+            type: 'success',
+            text: 'Done',
+            onClick() {
+                DevExpress.ui.notify('Form kaydediliyor.');
+            },
+        });
+
+        $('#icon-weather').dxButton({
+            icon: 'images/icons/weather.png',
+            text: 'Weather',
+            onClick() {
+                DevExpress.ui.notify('The Weather button was clicked');
+            },
+        });
+
+        $('#icon-send').dxButton({
+            icon: 'fa fa-envelope-o',
+            text: 'Send',
+            onClick() {
+                DevExpress.ui.notify('The Send button was clicked');
+            },
+        });
+
+        $('#icon-plus').dxButton({
+            icon: 'plus',
+            onClick() {
+                DevExpress.ui.notify('The button was clicked');
+            },
+        });
+
+        $('#icon-back').dxButton({
+            icon: 'back',
+            onClick() {
+                DevExpress.ui.notify('The button was clicked');
+            },
+        });
+
+        // Disabled Buttons (not changed)
+        $('#icon-disabled-done').dxButton({
+            icon: 'check',
+            type: 'success',
+            text: 'Done',
+            disabled: true,
+        });
+
+        $('#icon-disabled-weather').dxButton({
+            icon: 'images/icons/weather.png',
+            text: 'Weather',
+            disabled: true,
+        });
+
+        $('#icon-disabled-send').dxButton({
+            icon: 'fa fa-envelope-o',
+            text: 'Send',
+            disabled: true,
+        });
+
+        $('#icon-disabled-plus').dxButton({
+            icon: 'plus',
+            disabled: true,
+        });
+
+        $('#icon-disabled-back').dxButton({
+            icon: 'back',
+            disabled: true,
+        });
+    });
+
+
+
+
+
+
+
+</script>

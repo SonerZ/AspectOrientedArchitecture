@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
+    <PackageReference Include="Castle.Core" Version="4.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0-preview.6.24327.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
+    <ProjectReference Include="..\Application.Packages.Caching.Core\Application.Packages.Caching.Core.csproj" />
+    <ProjectReference Include="..\Application.Packages.HttpClient\Application.Packages.HttpClient.csproj" />
+    <ProjectReference Include="..\Application.Packages.JWT\Application.Packages.JWT.csproj" />
+    <ProjectReference Include="..\Application.Packages.RabbitMQ\Application.Packages.RabbitMQ.csproj" />
+  </ItemGroup>
+
+</Project>
